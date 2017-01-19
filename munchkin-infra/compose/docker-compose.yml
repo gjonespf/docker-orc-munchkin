@@ -1,0 +1,34 @@
+version: '2'
+services:
+
+  munchkin-storage:
+    image: minio/minio:latest
+    restart: always
+    command: server /export
+    ports:
+      - "9000"    
+    volumes:
+      - munchkin-storage:/export
+    labels:
+      - "traefik.backend=munchkin-storage"
+      - "traefik.frontend.rule=Host:munchkin-storage.$DOCKER_DC.$DOCKER_BASEDOMAIN"
+      - "traefik.port=9000"
+      - "traefik.frontend.entryPoints=http,https,https-admin"
+      - "traefik.enable=true"
+    container_name: munchkin-storage-main
+    environment:
+      - MINIO_ACCESS_KEY=$MINIO_ACCESS_KEY
+      - MINIO_SECRET_KEY=$MINIO_SECRET_KEY
+    networks:
+      - devops-back    
+
+volumes:
+  munchkin-storage:
+    external: true
+
+networks:
+  default:
+    driver: bridge
+  devops-back:
+    external: true
+

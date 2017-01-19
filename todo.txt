@@ -1,0 +1,7 @@
+- Need env vars for:
+ - "Orc-Leader"
+ - CFG dir
+ - Data dir
+- External cfg for mount (munchkin-storage), so it can be loaded elsewhere (temporarily)
+- Test mounting and loading cfg from volume
+- sh bootstrap
