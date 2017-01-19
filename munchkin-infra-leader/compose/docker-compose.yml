@@ -1,21 +1,22 @@
 version: '2'
 services:
 
-  munchkin-storage:
+  #Only for a single instance for all DCs and nodes, to act as a leader (alternatively common backend storage?)
+  munchkin-storage-leader:
     image: minio/minio:$MINIO_STABLE_TAG
     restart: always
     command: server /export
     ports:
       - "9000"    
     volumes:
-      - munchkin-storage:/export
+      - munchkin-storage-leader:/export
     labels:
-      - "traefik.backend=munchkin-storage"
-      - "traefik.frontend.rule=Host:munchkin-storage.$DOCKER_DC.$DOCKER_BASEDOMAIN"
+      - "traefik.backend=munchkin-storage-leader"
+      - "traefik.frontend.rule=Host:munchkin-storage-leader.$DOCKER_DC.$DOCKER_BASEDOMAIN"
       - "traefik.port=9000"
       - "traefik.frontend.entryPoints=http,https"
       - "traefik.enable=true"
-    container_name: munchkin-storage-main
+    container_name: munchkin-storage-leader
     environment:
       - MINIO_ACCESS_KEY=$MINIO_ACCESS_KEY
       - MINIO_SECRET_KEY=$MINIO_SECRET_KEY
@@ -23,7 +24,7 @@ services:
       - devops-back    
 
 volumes:
-  munchkin-storage:
+  munchkin-storage-leader:
     external: true
 
 networks:
